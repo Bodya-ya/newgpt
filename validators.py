@@ -20,7 +20,7 @@ def check_number_of_users(user_id):
     return True, ""
 
 # проверяем, не превысил ли пользователь лимиты на общение с GPT
-def is_gpt_token_limit(messages,message, total_spent_tokens):
+def is_gpt_token_limit(messages, message, total_spent_tokens):
     user_id = message.from_user.id
     all_tokens = count_gpt_tokens(messages) + total_spent_tokens
     if all_tokens > MAX_USER_GPT_TOKENS and user_id not in ADMINS:

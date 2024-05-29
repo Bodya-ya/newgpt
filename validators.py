@@ -1,7 +1,7 @@
 import logging  # модуль для сбора логов
 import math  # математический модуль для округления
 # подтягиваем константы из config файла
-from config import LOGS, MAX_USERS, MAX_USER_GPT_TOKENS, MAX_USER_STT_BLOCKS, MAX_USER_TTS_SYMBOLS, MAX_TTS_SYMBOLS
+from config import LOGS, MAX_USERS, MAX_USER_GPT_TOKENS, MAX_USER_STT_BLOCKS, MAX_USER_TTS_SYMBOLS, MAX_TTS_SYMBOLS, ADMINS
 # подтягиваем функции для работы с БД
 from database import *
 # подтягиваем функцию для подсчета токенов в списке сообщений
@@ -15,15 +15,16 @@ def check_number_of_users(user_id):
     count = count_users(user_id)
     if count is None:
         return None, "Ошибка при работе с БД"
-    if count > MAX_USERS:
+    if count > MAX_USERS and user_id not in ADMINS:
         return None, "Превышено максимальное количество пользователей"
     return True, ""
 
 # проверяем, не превысил ли пользователь лимиты на общение с GPT
-def is_gpt_token_limit(messages, total_spent_tokens):
+def is_gpt_token_limit(messages,message, total_spent_tokens):
+    user_id = message.from_user.id
     all_tokens = count_gpt_tokens(messages) + total_spent_tokens
-    if all_tokens > MAX_USER_GPT_TOKENS:
-        return None, f"Превышен общий ли мит GPT-токенов {MAX_USER_GPT_TOKENS}"
+    if all_tokens > MAX_USER_GPT_TOKENS and user_id not in ADMINS:
+        return None, f"Превышен общий лимит GPT-токенов {MAX_USER_GPT_TOKENS}"
     return all_tokens, ""
 
 # проверяем, не превысил ли пользователь лимиты на преобразование текста в аудио
@@ -39,7 +40,7 @@ def is_stt_block_limit(user_id, duration):
         return None, "SpeechKit STT работает с голосовыми сообщениями меньше 30 секунд"
 
     # Сравниваем all_blocks с количеством доступных пользователю аудиоблоков
-    if all_blocks >= MAX_USER_STT_BLOCKS:
+    if all_blocks >= MAX_USER_STT_BLOCKS and user_id not in ADMINS:
         return None, f"Превышен общий лимит SpeechKit STT {MAX_USER_STT_BLOCKS}. Использовано {all_blocks} блоков. Доступно: {MAX_USER_STT_BLOCKS - all_blocks}"
     return audio_blocks, ""
 
@@ -51,10 +52,10 @@ def is_tts_symbol_limit(user_id, text):
     all_symbols = count_all_symbol(user_id) + text_symbols
 
     # Сравниваем all_symbols с количеством доступных пользователю символов
-    if all_symbols >= MAX_USER_TTS_SYMBOLS:
+    if all_symbols >= MAX_USER_TTS_SYMBOLS and user_id not in ADMINS:
         return None, f"Превышен общий лимит SpeechKit TTS {MAX_USER_TTS_SYMBOLS}. Использовано: {all_symbols} символов. Доступно: {MAX_USER_TTS_SYMBOLS - all_symbols}"
 
     # Сравниваем количество символов в тексте с максимальным количеством символов в тексте
-    if text_symbols >= MAX_TTS_SYMBOLS:
+    if text_symbols >= MAX_TTS_SYMBOLS and user_id not in ADMINS:
         return None, f"Превышен лимит SpeechKit TTS на запрос {MAX_TTS_SYMBOLS}, в сообщении {text_symbols} символов"
     return text_symbols, ""

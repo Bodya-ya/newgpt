@@ -1,14 +1,14 @@
 
 
-MAX_USERS = 4  # максимальное кол-во пользователей
+MAX_USERS = 8  # максимальное кол-во пользователей
 MAX_GPT_TOKENS = 120  # максимальное кол-во токенов в ответе GPT
-COUNT_LAST_MSG = 4  # кол-во последних сообщений из диалога
-MAX_TTS_SYMBOLS = 220
+COUNT_LAST_MSG = 5  # кол-во последних сообщений из диалога
+MAX_TTS_SYMBOLS = 1200
 
 # лимиты для пользователя
-MAX_USER_STT_BLOCKS = 120  # 10 аудиоблоков
-MAX_USER_TTS_SYMBOLS = 50200  # 5 000 символов
-MAX_USER_GPT_TOKENS = 20200  # 2 000 токенов
+MAX_USER_STT_BLOCKS = 25  # 10 аудиоблоков
+MAX_USER_TTS_SYMBOLS = 5000  # 5 000 символов
+MAX_USER_GPT_TOKENS = 5000  # 2 000 токенов
 
 LOGS = 'logs.txt'  # файл для логов
 DB_FILE = 'messages.db'  # файл для базы данных

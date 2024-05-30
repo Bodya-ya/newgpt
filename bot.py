@@ -24,7 +24,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 def start(message):
     user_id = message.from_user.id
     if user_id in BLACK_LIST:
-        bot.send_message(message.chat.id, "Жора,ты придурок поэтому я не хочу с тобой работать")
+        bot.send_message(message.chat.id, "Вы не совсем нравитесь моему разработчику,поэтому лучше вам больше не обращаться ко мне,и к нему тоже:)")
     else:
         bot.send_message(message.chat.id, "Привет! Отправь мне голосовое сообщение или текст, и я тебе отвечу!")
     create_database()

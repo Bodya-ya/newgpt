@@ -1,7 +1,7 @@
 import telebot
 import logging
 
-from config import LOGS, COUNT_LAST_MSG
+from config import LOGS, COUNT_LAST_MSG, BLACK_LIST
 
 from yandex_gpt import ask_gpt, speech_to_text, text_to_speech
 
@@ -22,7 +22,11 @@ bot = telebot.TeleBot(BOT_TOKEN)
 # обрабатываем команду /start
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, "Привет! Отправь мне голосовое сообщение или текст, и я тебе отвечу!")
+    user_id = message.from_user.id
+    if user_id in BLACK_LIST:
+        bot.send_message(message.chat.id, "Жора,ты придурок поэтому я не хочу с тобой работать")
+    else:
+        bot.send_message(message.chat.id, "Привет! Отправь мне голосовое сообщение или текст, и я тебе отвечу!")
     create_database()
 
 # обрабатываем команду /help
